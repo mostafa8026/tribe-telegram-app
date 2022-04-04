@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "projects": {
+    "tribe-telegram-app": "apps/tribe-telegram-app"
+  }
+}

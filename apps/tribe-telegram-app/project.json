@@ -1,0 +1,52 @@
+{
+  "root": "apps/tribe-telegram-app",
+  "sourceRoot": "apps/tribe-telegram-app/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/tribe-telegram-app",
+        "main": "apps/tribe-telegram-app/src/main.ts",
+        "tsConfig": "apps/tribe-telegram-app/tsconfig.app.json",
+        "assets": ["apps/tribe-telegram-app/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/tribe-telegram-app/src/environments/environment.ts",
+              "with": "apps/tribe-telegram-app/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "tribe-telegram-app:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/tribe-telegram-app/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/tribe-telegram-app"],
+      "options": {
+        "jestConfig": "apps/tribe-telegram-app/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
