@@ -1,0 +1,33 @@
+{
+  "root": "libs/tribe-module",
+  "sourceRoot": "libs/tribe-module/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/tribe-module",
+        "tsConfig": "libs/tribe-module/tsconfig.lib.json",
+        "packageJson": "libs/tribe-module/package.json",
+        "main": "libs/tribe-module/src/index.ts",
+        "assets": ["libs/tribe-module/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/tribe-module/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/tribe-module"],
+      "options": {
+        "jestConfig": "libs/tribe-module/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
