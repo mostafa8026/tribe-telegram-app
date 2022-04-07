@@ -27,12 +27,10 @@ export class TribeService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      // this.accessToken = await this._tribeClient.generateToken({
-      //   networkId: this._tribeOption.networkId,
-      //   memberId: this._tribeOption.networkId,
-      // });
-      this.accessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InkzZUJwd3JvQkEiLCJleHRlcm5hbEFjdG9ySWQiOiJBUFA6OkFhZkFmMzZPWWNodyIsIm5ldHdvcmtJZCI6IjJYQlFPMFo5ZDUiLCJ0b2tlblR5cGUiOiJMSU1JVEVEIiwiZW50aXR5SWQiOiIyWEJRTzBaOWQ1IiwicGVybWlzc2lvbkNvbnRleHQiOiJORVRXT1JLIiwicGVybWlzc2lvbnMiOlsiKiJdLCJpYXQiOjE2NDkyMTU0NzQsImV4cCI6MTY1MTgwNzQ3NH0.944I0wQLA1vCWw8BsyPtPI70Li3RGVEaE-rdPtWGSCs';
+      this.accessToken = await this._tribeClient.generateToken({
+        networkId: this._tribeOption.networkId,
+        memberId: this._tribeOption.memberId,
+      });
 
       this._logger.debug(`Token generated succesfully, ${this.accessToken}`);
       this._tribeClient.setToken(this.accessToken);
