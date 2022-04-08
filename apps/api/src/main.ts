@@ -5,6 +5,7 @@
 
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerService } from '@tribe-telegram-app/shared';
 import { AppModule } from './app/app.module';
 import { TelegramServer } from './modules/telegram/telegram.server';
@@ -26,10 +27,18 @@ async function bootstrap() {
   // Starts listening for shutdown hooks
   app.enableShutdownHooks();
 
+  const config = new DocumentBuilder()
+    .setTitle('Tribe Telegram App')
+    .setDescription('The Tribe Telegram App Integration, API description')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
   const port = process.env.PORT || 3333;
   await app.listen(port);
   await app.startAllMicroservices();
-  
+
   logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
