@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseOptionEntity } from '../../base-option-entity';
 
 @Entity({
@@ -8,6 +8,6 @@ export class MessageQueryOptionEntity extends BaseOptionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 }

@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BaseOptionEntity } from '../../base-option-entity';
 
 // TODO: It seems that repository creation is changed and TypeOrmModule has not been updated,
@@ -18,4 +23,7 @@ export class UserEntity extends BaseOptionEntity {
 
   @Column()
   page: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

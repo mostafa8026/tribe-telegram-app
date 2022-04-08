@@ -90,7 +90,6 @@ export class DispatcherService
       message: message + '', // convert to string
       options: options,
     };
-    row.createdAt = new Date();
     row = await this._messageQueryOptionService.save(row);
     return `${row.id}`; // convert to string
   }

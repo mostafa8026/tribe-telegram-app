@@ -8,6 +8,8 @@ import {
 import { TribeClient } from '@tribeplatform/gql-client';
 import {
   Member,
+  PaginatedPost,
+  PostListOrderByEnum,
   SpaceListOrderByEnum,
   SpaceType,
 } from '@tribeplatform/gql-client/types';
@@ -96,23 +98,37 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getAllPosts() {
+  // async getAllComments() {
+  //   try{
+  //     const comments = await this._tribeClient.posts.replies({})
+  //   }
+  // }
+
+  async getAllPosts(after?: string): Promise<PaginatedPost> {
     try {
       const posts = await this._tribeClient.posts.list(
         {
-          limit: 10,
+          after,
+          limit: 1,
+          orderBy: PostListOrderByEnum.CREATED_AT,
         },
         'all',
         this.accessToken
       );
       return posts;
     } catch (error) {
-      this._logger.error(error);
-      throw new InternalServerErrorException('Can not get posts');
+      this._logger.error(error.response);
+      if (error.response.errors[0].code == 122) {
+        // Everything is fine, there isn't any more post
+        this._logger.log('No more post');
+      } else {
+        this._logger.error(error.response);
+        throw new InternalServerErrorException('Can not get posts');
+      }
     }
   }
 
-  async getMemberByID(id): Promise<Member> {
+  async getMemberByID(id: string): Promise<Member> {
     try {
       const userInfo = await this._tribeClient.members.get(
         id,

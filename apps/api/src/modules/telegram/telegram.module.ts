@@ -20,5 +20,6 @@ import { MessageQueryOptionService } from './services/message-query-option.servi
   ],
   providers: [DispatcherService, MessageQueryOptionService],
   controllers: [HomeController],
+  exports: [DispatcherService],
 })
 export class TelegramModule {}

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SharedModule } from '@tribe-telegram-app/shared';
+import { PostModule } from '../modules/post/post.module';
 import { TelegramModule } from '../modules/telegram/telegram.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -34,6 +35,7 @@ import ormConfig from './config/orm.config';
     }),
 
     TelegramModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
