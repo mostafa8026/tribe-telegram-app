@@ -13,4 +13,12 @@ export class UserService {
   getAll() {
     return this._userRepository.find();
   }
+
+  getByChatId(chatId: number) {
+    return this._userRepository.findOne({ where: { chatId } });
+  }
+
+  save(user: UserEntity) {
+    return this._userRepository.save(user);
+  }
 }

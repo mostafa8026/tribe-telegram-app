@@ -6,10 +6,19 @@ import {
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { LoggerService } from '@tribe-telegram-app/shared';
+import { emojify } from 'node-emoji';
 import * as TelegramBot from 'node-telegram-bot-api';
 import { CallbackQuery } from 'node-telegram-bot-api';
+import { QueryOption } from '../../base-option-entity';
+import { UserEntity } from '../../user/entities/user.entity';
+import { UserService } from '../../user/user.service';
+import { HandlerData } from '../classes/handler-data';
+import { TelegramMessage } from '../classes/telegram-message';
 import botConfig from '../configs/bot.config';
 import proxyConfig from '../configs/proxy.config';
+import { Pages } from '../constants/pages.enum';
+import { MessageQueryOptionEntity } from '../entities/message-query-options';
+import { MessageQueryOptionService } from './message-query-option.service';
 
 @Injectable()
 export class DispatcherService
@@ -23,7 +32,9 @@ export class DispatcherService
     private readonly botConfigService: ConfigType<typeof botConfig>,
     @Inject(proxyConfig.KEY)
     private readonly proxyConfigService: ConfigType<typeof proxyConfig>,
-    private readonly _logger: LoggerService
+    private readonly _logger: LoggerService,
+    private readonly _userService: UserService,
+    private readonly _messageQueryOptionService: MessageQueryOptionService
   ) {
     this._logger.setContext(DispatcherService.name);
   }
@@ -44,11 +55,56 @@ export class DispatcherService
 
     this.bot.on('message', async (message) => {
       this._logger.debug('message received ' + JSON.stringify(message));
-      await this.dispatch(message);
+      const telegramMessage = new TelegramMessage();
+      telegramMessage.message = message;
+      telegramMessage.text = message.text;
+      telegramMessage.isCallback = false;
+      telegramMessage.page = null;
+      telegramMessage.pageOptions = null;
+      await this.dispatch(telegramMessage);
     });
     this.bot.on('callback_query', async (msg: CallbackQuery) => {
       this._logger.debug('callback received ' + JSON.stringify(msg));
+      const data = msg.data;
+      const { pageAction, message, options } = await this.decompressData(data);
+      const telegramMessage = new TelegramMessage();
+      telegramMessage.message = msg.message;
+      telegramMessage.message.from = msg.from;
+      telegramMessage.callback = msg;
+      telegramMessage.text = message;
+      telegramMessage.isCallback = true;
+      telegramMessage.page = pageAction;
+      telegramMessage.pageOptions = options;
+      await this.dispatch(telegramMessage);
     });
+  }
+
+  async compressData(
+    pageAction: string,
+    message = null,
+    options: QueryOption = {}
+  ) {
+    let row = new MessageQueryOptionEntity();
+    row.pageOptions = {
+      pageAction: pageAction,
+      message: message + '', // convert to string
+      options: options,
+    };
+    row.createdAt = new Date();
+    row = await this._messageQueryOptionService.save(row);
+    return `${row.id}`; // convert to string
+  }
+
+  async decompressData(id): Promise<QueryOption> {
+    const row = await this._messageQueryOptionService.getById(id);
+    if (!row) {
+      return {
+        pageAction: Pages.Home,
+        message: null,
+        options: {},
+      };
+    }
+    return row.pageOptions;
   }
 
   async onApplicationShutdown() {
@@ -60,18 +116,33 @@ export class DispatcherService
     this.pages = pages;
   }
 
-  async dispatch(message: TelegramBot.Message) {
-    let page = 'Home';
-    if (message.text === '/start') {
-      page = 'Home';
-    } else if (message.text === '/greetings') {
-      page = 'Greetings';
+  async dispatch(telegramMessage: TelegramMessage) {
+    let page = Pages.Home;
+    const message = telegramMessage.message;
+
+    // find user
+    let user = await this._userService.getByChatId(message.from.id);
+
+    if (!user) {
+      user = new UserEntity();
+      user.chatId = message.from.id;
+      user.page = page = Pages.HomeIntro;
+      user.pageOptions = { options: {} };
+      user = await this._userService.save(user);
+    } else if (!user.tribeId) {
+      page = Pages.HomeIntro;
+    } else {
+      if (telegramMessage.text === '/start') {
+        page = Pages.Home;
+      } else if (telegramMessage.text === '/greetings') {
+        page = Pages.Greetings;
+      }
     }
 
-    return this.run(message, page);
+    return this.run(telegramMessage, user, page);
   }
 
-  async run(message: TelegramBot.Message, page: string) {
+  async run(message: TelegramMessage, user: UserEntity, page: string) {
     this._logger.debug('RUN_ACTION run this pageAction ' + page);
 
     const handler = this.pages.get(page);
@@ -82,10 +153,54 @@ export class DispatcherService
       return false;
     }
 
-    return handler(message);
+    user.page = page;
+    this._userService.save(user);
+
+    const handlerData = new HandlerData();
+    handlerData.telegramMessage = message;
+    handlerData.user = user;
+
+    return handler(handlerData);
   }
 
-  async sendMessage(receiver: number, text: string) {
-    return await this.bot.sendMessage(receiver, text);
+  async sendMessage(
+    receiver: UserEntity,
+    text: string,
+    hideKeyboard = false,
+    options: TelegramBot.SendMessageOptions = {}
+  ) {
+    await this._userService.save(receiver);
+    if (hideKeyboard) {
+      options.reply_markup = {
+        remove_keyboard: true,
+      };
+    }
+    return await this.bot.sendMessage(receiver.chatId, text, options);
+  }
+
+  async redirect(telegramMessage: TelegramMessage, user, newPage: string) {
+    return this.run(telegramMessage, user, newPage);
+  }
+
+  formatKeyboard(flatArray, maxColumn = 3) {
+    const result = [];
+    let counter = maxColumn;
+    let row = [];
+    for (const item of flatArray) {
+      if (item?.text) {
+        item.text = emojify(item.text);
+      }
+      if (counter == 0) {
+        result.push(row);
+        row = [];
+        counter = maxColumn;
+      }
+      row.push(item);
+      counter--;
+    }
+    if (row.length > 0) {
+      result.push(row);
+    }
+    return result;
   }
 }
