@@ -14,8 +14,10 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/microservices": "^8.4.4",
     "@nestjs/platform-express": "^8.0.0",
     "@tribeplatform/gql-client": "^1.2.0",
+    "node-telegram-bot-api": "^0.56.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
     "tslib": "^2.0.0"
@@ -32,6 +34,7 @@
     "@nrwl/workspace": "13.9.6",
     "@types/jest": "27.0.2",
     "@types/node": "16.11.7",
+    "@types/node-telegram-bot-api": "^0.56.2",
     "@typescript-eslint/eslint-plugin": "~5.10.0",
     "@typescript-eslint/parser": "~5.10.0",
     "commitizen": "^4.2.4",

@@ -2,10 +2,10 @@ import { TribeModule } from '@mostafa8026/tribe-module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { SharedModule } from '@tribe-telegram-app/shared';
-import tokenConfig from '../config/token.config';
-
+import { TelegramModule } from '../modules/telegram/telegram.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import tokenConfig from './config/token.config';
 
 @Module({
   imports: [
@@ -18,6 +18,7 @@ import { AppService } from './app.service';
       },
       inject: [tokenConfig.KEY],
     }),
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
