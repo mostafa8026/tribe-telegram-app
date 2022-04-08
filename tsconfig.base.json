@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mostafa8026/tribe-module": ["libs/tribe-module/src/index.ts"]
+      "@mostafa8026/tribe-module": ["libs/tribe-module/src/index.ts"],
+      "@tribe-telegram-app/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

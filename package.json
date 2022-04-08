@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
-    "build": "nx build",
+    "start": "yarn run build && node -r dotenv/config dist/apps/api/main.js dotenv_config_path=apps/api/.env",
+    "build": "nx build api",
     "test": "nx test",
-    "commit": "cz"
+    "commit": "cz",
+    "dev": "nx serve api"
   },
   "private": true,
   "dependencies": {
@@ -35,6 +36,7 @@
     "@typescript-eslint/parser": "~5.10.0",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.0.0",
     "eslint": "~8.7.0",
     "eslint-config-prettier": "8.1.0",
     "jest": "27.2.3",
