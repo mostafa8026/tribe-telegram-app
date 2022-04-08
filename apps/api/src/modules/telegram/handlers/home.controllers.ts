@@ -1,3 +1,4 @@
+import { TribeService } from '@mostafa8026/tribe-module';
 import { Controller } from '@nestjs/common';
 import * as TelegramBot from 'node-telegram-bot-api';
 import { TelegramPage } from '../decorators/telegram-page.decorator';
@@ -5,7 +6,10 @@ import { DispatcherService } from '../services/dispatcher.service';
 
 @Controller()
 export class HomeController {
-  constructor(private _dispatcherService: DispatcherService) {}
+  constructor(
+    private _dispatcherService: DispatcherService,
+    private _tribeService: TribeService
+  ) {}
 
   @TelegramPage('Home')
   async index(message: TelegramBot.Message) {

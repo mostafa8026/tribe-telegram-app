@@ -1,5 +1,4 @@
 import {
-  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -38,6 +37,27 @@ export class TribeService implements OnModuleInit {
       this._logger.error(error);
       throw new InternalServerErrorException(
         'Can not genrate Tribe Access token'
+      );
+    }
+  }
+
+  async login(username, password) {
+    try {
+      const authToken = this._tribeClient.auth.login(
+        {
+          input: {
+            usernameOrEmail: username,
+            password,
+          },
+        },
+        'all'
+      );
+
+      return authToken;
+    } catch (error) {
+      this._logger.error(error);
+      throw new InternalServerErrorException(
+        'An error occured while authenticating user'
       );
     }
   }

@@ -1,4 +1,3 @@
-import { TribeModule } from '@mostafa8026/tribe-module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,7 +6,6 @@ import { TelegramModule } from '../modules/telegram/telegram.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import ormConfig from './config/orm.config';
-import tokenConfig from './config/token.config';
 
 @Module({
   imports: [
@@ -33,14 +31,6 @@ import tokenConfig from './config/token.config';
         };
       },
       inject: [ormConfig.KEY],
-    }),
-
-    TribeModule.forRootAsync({
-      imports: [ConfigModule.forFeature(tokenConfig)],
-      useFactory: (tribeOptions: ConfigType<typeof tokenConfig>) => {
-        return tribeOptions;
-      },
-      inject: [tokenConfig.KEY],
     }),
 
     TelegramModule,
