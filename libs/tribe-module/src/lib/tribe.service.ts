@@ -5,7 +5,7 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
-import { TribeClient } from '@tribeplatform/gql-client';
+import { MemberFields, TribeClient } from '@tribeplatform/gql-client';
 import {
   Member,
   PaginatedPost,
@@ -128,11 +128,11 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getMemberByID(id: string): Promise<Member> {
+  async getMemberByID(id: string, fields: MemberFields = 'all'): Promise<Member> {
     try {
       const userInfo = await this._tribeClient.members.get(
         id,
-        'all',
+        fields,
         this.accessToken
       );
       return userInfo;

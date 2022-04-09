@@ -1,8 +1,8 @@
 import { TribeService } from '@mostafa8026/tribe-module';
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerService } from '@tribe-telegram-app/shared';
+import { RoleType } from '@tribeplatform/gql-client/types';
 import { Repository } from 'typeorm';
 import { DispatcherService } from '../telegram/services/dispatcher.service';
 import { UserEntity } from '../user/entities/user.entity';
@@ -28,7 +28,8 @@ export class PostService {
 
   private syncInProgress = false;
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  // Commented, as I'm trying to implement webhook.
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async syncPosts() {
     if (this.syncInProgress) return;
     this.syncInProgress = true;
@@ -38,13 +39,13 @@ export class PostService {
       await Promise.all(
         users.map(async (user) => {
           const userTribe = await this._tribeService.getMemberByID(
-            user.tribeId
+            user.tribeId,
+            { role: 'basic' }
           );
-          adminUsers.push(user);
-          // TODO: fix roles, why we don't have role propery, ref: https://community.tribe.so/devhub/post/how-to-get-member-roles-RC63goszXp0ja0g
-          // if (userTribe.role.type == RoleType.ADMIN) {
-          //   adminUsers.push(user);
-          // }
+          console.log(userTribe);
+          if (userTribe.role.type == RoleType.ADMIN) {
+            adminUsers.push(user);
+          }
         })
       );
       const lastPost = await this._postRepository.find({
