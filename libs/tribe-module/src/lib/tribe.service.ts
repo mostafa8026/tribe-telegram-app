@@ -5,10 +5,11 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
-import { MemberFields, TribeClient } from '@tribeplatform/gql-client';
+import { MemberFields, PostFields, TribeClient } from '@tribeplatform/gql-client';
 import {
   Member,
   PaginatedPost,
+  Post,
   PostListOrderByEnum,
   SpaceListOrderByEnum,
   SpaceType,
@@ -139,6 +140,20 @@ export class TribeService implements OnModuleInit {
     } catch (error) {
       this._logger.error(error);
       throw new InternalServerErrorException('Can not get user info');
+    }
+  }
+
+  async getPostById(id: string, fields: PostFields = 'all'): Promise<Post> {
+    try {
+      const postInfo = await this._tribeClient.posts.get(
+        id,
+        fields,
+        this.accessToken
+      );
+      return postInfo;
+    } catch (error) {
+      this._logger.error(error);
+      throw new InternalServerErrorException('Can not get post info');
     }
   }
 }
