@@ -38,13 +38,14 @@ export class WebhookController {
     this._logger.debug('X-Tribe-Signature ' + tribeSignature);
 
     var difference = tribeRequestTimeStamp - Date.now() / 1000 / 60;
-    this._logger.debug('difference ' + tribeSignature);
+    this._logger.debug('difference ' + difference);
     if (difference > 15) {
       // greater than 15 minutes
       throw new ConflictException('dropping webhooks older than 15 minutes');
     }
 
     const entity = this._webhookService.getWebhookAuditById(body.data.id);
+    this._logger.log('Verifying replays, ' + JSON.stringify(entity));
     if (entity) {
       throw new ConflictException(
         'This webhook was recieved before. droping it.'
@@ -60,6 +61,7 @@ export class WebhookController {
 
     await this._webhookService.saveWebhookAudit(saveEntity);
 
+    this._logger.debug('Verifying signature');
     if (
       !verifySignature({
         signature: tribeSignature,
@@ -73,9 +75,14 @@ export class WebhookController {
       );
     }
 
+    this._logger.debug('Signature verfied succesfully');
+
     switch (body.type) {
       case HookTypes.TEST: {
-        return this._webhookService.testHookHandler(body);
+        this._logger.debug('Test Webhook received');
+        const ret = this._webhookService.testHookHandler(body);
+        this._logger.debug('Return this object: ' + JSON.stringify(ret));
+        return ret;
       }
       case HookTypes.SUBSCRIPTION: {
         if (body.data.name === 'post.published') {
