@@ -10,10 +10,10 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { LoggerService } from '@tribe-telegram-app/shared';
 import tokenConfig from 'libs/shared/src/lib/configs/token.config';
+import { v4 as uuidv4 } from 'uuid';
 import { verifySignature } from './classes/signing';
 import { WebhookAuditEntity } from './entities/webhook-audit.entity';
 import { WebhookService } from './webhook.service';
-
 @Controller('webhook')
 export class WebhookController {
   constructor(
@@ -34,6 +34,9 @@ export class WebhookController {
     this._logger.debug('New webhook received');
     this._logger.verbose(body);
 
+    this._logger.debug('Body data is, ');
+    this._logger.verbose(body.data);
+
     this._logger.debug('X-Tribe-Request-Timestamp ' + tribeRequestTimeStamp);
     this._logger.debug('X-Tribe-Signature ' + tribeSignature);
 
@@ -53,11 +56,11 @@ export class WebhookController {
     }
 
     let saveEntity = new WebhookAuditEntity();
-    saveEntity.id = body.data.id;
-    saveEntity.actorId = body.data.actor.id;
-    saveEntity.name = body.data.name;
-    saveEntity.objectId = body.object.id;
-    saveEntity.targetNetworkId = body.target.networkId;
+    saveEntity.id = body.data?.id || uuidv4();
+    saveEntity.actorId = body.data?.actor?.id || '';
+    saveEntity.name = body.data?.name || '';
+    saveEntity.objectId = body.object?.id || '';
+    saveEntity.targetNetworkId = body.target?.networkId || body.networkId || '';
 
     await this._webhookService.saveWebhookAudit(saveEntity);
 
