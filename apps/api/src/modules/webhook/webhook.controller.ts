@@ -28,17 +28,18 @@ export class WebhookController {
   @Post()
   async webhookHandler(
     @Body() body,
-    @Headers('X-Tribe-Request-Timestamp') tribeRequestTimeStamp: Date,
+    @Headers('X-Tribe-Request-Timestamp') tribeRequestTimeStamp: number,
     @Headers('X-Tribe-Signature') tribeSignature: string
   ) {
     this._logger.debug('New webhook received');
     this._logger.verbose(body);
 
-    this._logger.debug('X-Tribe-Request-Timestamp' + tribeRequestTimeStamp);
-    this._logger.debug('X-Tribe-Signature' + tribeSignature);
+    this._logger.debug('X-Tribe-Request-Timestamp ' + tribeRequestTimeStamp);
+    this._logger.debug('X-Tribe-Signature ' + tribeSignature);
 
-    var difference = tribeRequestTimeStamp.getTime() - Date.now();
-    if (difference / 1000 / 60 > 15) {
+    var difference = tribeRequestTimeStamp - Date.now() / 1000 / 60;
+    this._logger.debug('difference ' + tribeSignature);
+    if (difference > 15) {
       // greater than 15 minutes
       throw new ConflictException('dropping webhooks older than 15 minutes');
     }
@@ -63,7 +64,7 @@ export class WebhookController {
       !verifySignature({
         signature: tribeSignature,
         secret: this._tokenConfigService.signingSecret,
-        timestamp: tribeRequestTimeStamp.getTime(),
+        timestamp: tribeRequestTimeStamp,
         body: body,
       })
     ) {
