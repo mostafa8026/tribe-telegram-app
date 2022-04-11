@@ -7,7 +7,9 @@ export class WebhookAuditEntity {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   type: string;
 
   @Column()
