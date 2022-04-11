@@ -50,17 +50,22 @@ export class WebhookController {
       throw new ConflictException('dropping webhooks older than 15 minutes');
     }
 
-    const entity = await this._webhookService.getWebhookAuditById(body.data.id);
-    this._logger.log('Verifying replays, ' + JSON.stringify(entity));
-    if (entity) {
-      throw new ConflictException(
-        'This webhook was recieved before. droping it.'
+    if (body.data?.id) {
+      const entity = await this._webhookService.getWebhookAuditById(
+        body.data.id
       );
+      this._logger.log('Verifying replays, ' + JSON.stringify(entity));
+      if (entity) {
+        throw new ConflictException(
+          'This webhook was recieved before. droping it.'
+        );
+      }
     }
 
     let saveEntity = new WebhookAuditEntity();
     saveEntity.id = body.data?.id || uuidv4();
     saveEntity.actorId = body.data?.actor?.id || '';
+    saveEntity.type = body.type || 'UNKNOWN';
     saveEntity.name = body.data?.name || '';
     saveEntity.objectId = body.object?.id || '';
     saveEntity.targetNetworkId = body.target?.networkId || body.networkId || '';

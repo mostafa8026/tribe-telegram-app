@@ -8,6 +8,9 @@ export class WebhookAuditEntity {
   id: string;
 
   @Column()
+  type: string;
+
+  @Column()
   name: string;
 
   @CreateDateColumn()
