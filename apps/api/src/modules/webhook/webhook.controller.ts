@@ -12,6 +12,7 @@ import { LoggerService } from '@tribe-telegram-app/shared';
 import tokenConfig from 'libs/shared/src/lib/configs/token.config';
 import { v4 as uuidv4 } from 'uuid';
 import { verifySignature } from './classes/signing';
+import { HookTypes } from './constants/hook-types.enum';
 import { WebhookAuditEntity } from './entities/webhook-audit.entity';
 import { WebhookService } from './webhook.service';
 @Controller('webhook')

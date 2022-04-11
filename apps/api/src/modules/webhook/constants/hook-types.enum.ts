@@ -1,4 +1,4 @@
-enum HookTypes {
+export enum HookTypes {
   TEST = 'TEST',
   SUBSCRIPTION = 'SUBSCRIPTION',
 }
