@@ -1,24 +1,29 @@
 version: "3"
 services:
   api:
-    build: tools/devops/build/backend.Dockerfile
+    build: 
+      context: ../../../
+      dockerfile: tools/devops/build/backend.Dockerfile
     image: mostafa8026/tribe-telegram-app-api
     container_name: tribe-telegram-app-api
     restart: always
     environment:
-      PORT: ${PORT}
+      PORT: 3333
       TYPEORM_CONNECTION: mssql
       TYPEORM_HOST: db
       TYPEORM_PORT: 1433
       TYPEORM_USERNAME: sa
       TYPEORM_PASSWORD: "mM123!@#"
       TYPEORM_DATABASE: tribe
-      TYPEORM_SYNCHRONIZE: true
+      TYPEORM_SYNCHRONIZE: "true"
       TYPEORM_DRIVER_EXTRA: "{\"encrypt\": false}"
     ports:
-      - 3333:${PORT}
+      - 3333:3333
   db:
-    build: tools/devops/build/mssql/mssql.Dockerfile
+    build: 
+      context: ../../../
+      dockerfile: tools/devops/build/mssql/mssql.Dockerfile
+    image: mostafa8026/mssql-tribe
     container_name: db
     restart: always
     environment:
@@ -26,4 +31,7 @@ services:
       ACCEPT_EULA: Y
     volumes:
       - mssql_vol:/var/opt/mssql
+volumes:
+  mssql_vol:
+    name: mssql_vol
 

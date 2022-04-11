@@ -33,6 +33,7 @@ RUN cp /app/yarn.lock .
 
 RUN yarn install --frozen-lockfile --non-interactive
 RUN yarn add @grpc/proto-loader@^0.6.2 --frozen-lockfile --non-interactive
+RUN yarn add mssql@^8.1.0 --frozen-lockfile --non-interactive
 
 RUN mkdir -p /assets
 RUN cp -R /app/dist/apps/api/* /assets
