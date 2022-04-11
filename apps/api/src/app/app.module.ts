@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SharedModule } from '@tribe-telegram-app/shared';
 import { PostModule } from '../modules/post/post.module';
 import { TelegramModule } from '../modules/telegram/telegram.module';
+import { WebhookModule } from '../modules/webhook/webhook.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import ormConfig from './config/orm.config';
@@ -36,6 +37,7 @@ import ormConfig from './config/orm.config';
 
     TelegramModule,
     PostModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
