@@ -1,11 +1,11 @@
 import {
   BadRequestException,
-  Body,
   ConflictException,
   Controller,
   Headers,
   Inject,
   Post,
+  Req,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { LoggerService } from '@tribe-telegram-app/shared';
@@ -27,10 +27,13 @@ export class WebhookController {
 
   @Post()
   async webhookHandler(
-    @Body() body,
+    @Req() req,
     @Headers('X-Tribe-Request-Timestamp') tribeRequestTimeStamp: number,
     @Headers('X-Tribe-Signature') tribeSignature: string
   ) {
+    const body = req.body;
+    const rawBody = req.rawBody;
+
     this._logger.debug('New webhook received');
     this._logger.verbose(body);
 
@@ -70,7 +73,7 @@ export class WebhookController {
         signature: tribeSignature,
         secret: this._tokenConfigService.signingSecret,
         timestamp: tribeRequestTimeStamp,
-        body: body,
+        body: rawBody,
       })
     ) {
       throw new BadRequestException(

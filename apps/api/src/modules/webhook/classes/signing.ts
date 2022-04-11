@@ -20,10 +20,18 @@ export const verifySignature = (options: {
   body: string;
   timestamp: number;
 }): boolean => {
+  console.log('options: ', options);
   const { signature, secret, body, timestamp } = options;
   const timeDifference =
     (timestamp - new Date().getTime()) / MILLISECONDS_IN_MINUTE;
+  console.log('timeDifference: ', timeDifference);
   if (timeDifference > 5) return false;
   const hash = getSignature({ secret, body, timestamp });
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(hash));
+  console.log('hash: ', hash);
+  const isVerified = crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(hash)
+  );
+  console.log('isVerified: ', isVerified);
+  return isVerified;
 };

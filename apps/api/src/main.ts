@@ -7,6 +7,7 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerService } from '@tribe-telegram-app/shared';
+import * as bodyParser from 'body-parser';
 import { AppModule } from './app/app.module';
 import { TelegramServer } from './modules/telegram/telegram.server';
 
@@ -15,7 +16,17 @@ async function bootstrap() {
   logger.setContext('Bootstrapping');
   const app = await NestFactory.create(AppModule, {
     logger: logger,
+    bodyParser: false,
   });
+
+  const rawBodyBuffer = (req, res, buf, encoding) => {
+    if (buf && buf.length) {
+      req.rawBody = buf.toString(encoding || 'utf8');
+    }
+  };
+
+  app.use(bodyParser.urlencoded({ verify: rawBodyBuffer, extended: true }));
+  app.use(bodyParser.json({ verify: rawBodyBuffer }));
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
