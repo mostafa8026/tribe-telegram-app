@@ -9,5 +9,4 @@ export default registerAs('ormConfig', () => ({
   database: process.env.TYPEORM_DATABASE,
   synchronize: process.env.TYPEORM_SYNCHRONIZE || false,
   extra: process.env.TYPEORM_DRIVER_EXTRA,
-  migration: process.env.TYPEORM_MIGRATIONS || 'tools/migrations/*.ts',
 }));

@@ -25,7 +25,6 @@ import ormConfig from './config/orm.config';
           database: ormConfigService.database,
           synchronize: ormConfigService.synchronize as boolean,
           logging: true,
-          migrations: ormConfigService.migration,
           autoLoadEntities: true,
           ...(ormConfigService.extra && {
             extra: JSON.parse(ormConfigService.extra),
