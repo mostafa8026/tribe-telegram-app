@@ -9,6 +9,7 @@ import { PostService } from '../post/post.service';
 import { DispatcherService } from '../telegram/services/dispatcher.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { HookTypes } from './constants/hook-types.enum';
 import { TestHookDto as WebHookResponseDto } from './dtos/test-hook.dto';
 import { WebhookAuditEntity } from './entities/webhook-audit.entity';
 
