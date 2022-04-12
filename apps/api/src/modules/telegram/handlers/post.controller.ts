@@ -35,8 +35,9 @@ export class PostController {
       options.waitForReply = true;
       handlerData.user.page = handlerData.telegramMessage.page;
       handlerData.user.pageOptions = {
-        ...handlerData.telegramMessage.pageOptions,
-        ...options,
+        pageAction: handlerData.telegramMessage.pageOptions.pageAction,
+        message: handlerData.telegramMessage.pageOptions.message,
+        options,
       };
       return this._dispatcherService.sendMessage(
         handlerData.user,

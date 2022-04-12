@@ -100,7 +100,7 @@ export class TribeService implements OnModuleInit {
       );
     } catch (error) {
       this._logger.error(error);
-      throw new InternalServerErrorException('Can not like post');
+      throw new InternalServerErrorException('Can not like the post');
     }
   }
 
