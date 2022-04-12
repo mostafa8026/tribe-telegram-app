@@ -5,12 +5,17 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
-import { MemberFields, PostFields, TribeClient } from '@tribeplatform/gql-client';
+import {
+  MemberFields,
+  PostFields,
+  TribeClient,
+} from '@tribeplatform/gql-client';
 import {
   Member,
   PaginatedPost,
   Post,
   PostListOrderByEnum,
+  PostMappingTypeEnum,
   SpaceListOrderByEnum,
   SpaceType,
 } from '@tribeplatform/gql-client/types';
@@ -81,6 +86,40 @@ export class TribeService implements OnModuleInit {
     }
   }
 
+  async likePost(postId: string) {
+    try {
+      return this._tribeClient.posts.addReaction({
+        postId,
+        input: {
+          reaction: '+1',
+        },
+      });
+    } catch (error) {
+      this._logger.error(error);
+      throw new InternalServerErrorException('Can not like post');
+    }
+  }
+
+  async addNewComment(postId: string, comment: string) {
+    try {
+      return this._tribeClient.posts.reply(postId, {
+        input: {
+          postTypeId: 'fasdf',
+          mappingFields: [
+            {
+              key: 'content',
+              type: PostMappingTypeEnum.TEXT,
+              value: comment,
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      this._logger.error(error);
+      throw new InternalServerErrorException('Can not create comment');
+    }
+  }
+
   async getAllSpaces() {
     try {
       const spaces = await this._tribeClient.spaces.list(
@@ -129,7 +168,10 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getMemberByID(id: string, fields: MemberFields = 'all'): Promise<Member> {
+  async getMemberByID(
+    id: string,
+    fields: MemberFields = 'all'
+  ): Promise<Member> {
     try {
       const userInfo = await this._tribeClient.members.get(
         id,

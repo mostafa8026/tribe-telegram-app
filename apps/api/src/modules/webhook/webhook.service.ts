@@ -3,9 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerService } from '@tribe-telegram-app/shared';
 import { RoleType } from '@tribeplatform/gql-client/types';
+import { InlineKeyboardButton } from 'node-telegram-bot-api';
 import { Repository } from 'typeorm';
+import { QueryOption } from '../base-option-entity';
 import { PostEntity } from '../post/entities/post.entity';
 import { PostService } from '../post/post.service';
+import { Pages } from '../telegram/constants/pages.enum';
 import { DispatcherService } from '../telegram/services/dispatcher.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
@@ -72,9 +75,41 @@ export class WebhookService {
     await Promise.all(
       adminUsers.map(async (user) => {
         this._logger.debug('Try to send message to: ' + user.chatId);
+        let queryOption: QueryOption = {
+          options: {
+            postId,
+            user,
+          },
+        };
         await this._dispatcherService.sendMessage(
           user,
-          `New post has been added, https://decodl.tribeplatform.com/general/post/${postId}`
+          `💐 New post has been added, You can take a look here: https://decodl.tribeplatform.com/general/post/${postId} or just simply reply your comment or like it with the following button`,
+          false,
+          {
+            reply_markup: {
+              inline_keyboard: await this._dispatcherService.formatKeyboard(
+                [
+                  {
+                    text: '✍️ Reply',
+                    callback_data: await this._dispatcherService.compressData(
+                      Pages.PostReply,
+                      null,
+                      queryOption
+                    ),
+                  },
+                  {
+                    text: '👍 Like',
+                    callback_data: await this._dispatcherService.compressData(
+                      Pages.PostLike,
+                      null,
+                      queryOption
+                    ),
+                  },
+                ] as InlineKeyboardButton[],
+                2
+              ),
+            },
+          }
         );
       })
     );

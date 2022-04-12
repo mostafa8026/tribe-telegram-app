@@ -64,12 +64,13 @@ export class WebhookController {
     }
 
     let saveEntity = new WebhookAuditEntity();
-    saveEntity.id = body.data?.id || uuidv4();
-    saveEntity.actorId = body.data?.actor?.id || '';
-    saveEntity.type = body.type || 'UNKNOWN';
-    saveEntity.name = body.data?.name || '';
-    saveEntity.objectId = body.object?.id || '';
-    saveEntity.targetNetworkId = body.target?.networkId || body.networkId || '';
+    saveEntity.id = body.data?.id ?? uuidv4();
+    saveEntity.actorId = body.data?.actor?.id ?? '';
+    saveEntity.type = body.type ?? 'UNKNOWN';
+    saveEntity.name = body.data?.name ?? '';
+    saveEntity.objectId = body.data?.object?.id ?? '';
+    saveEntity.targetNetworkId =
+      body.data?.target?.networkId ?? body.networkId ?? '';
 
     await this._webhookService.saveWebhookAudit(saveEntity);
 

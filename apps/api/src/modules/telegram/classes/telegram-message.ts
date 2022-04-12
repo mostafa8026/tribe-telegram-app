@@ -1,4 +1,5 @@
 import { CallbackQuery, Message } from 'node-telegram-bot-api';
+import { QueryOption } from '../../base-option-entity';
 
 export class TelegramMessage {
   message: Message;
@@ -6,5 +7,5 @@ export class TelegramMessage {
   text: string;
   isCallback: boolean;
   page: string;
-  pageOptions: { [key: string]: any };
+  pageOptions: QueryOption;
 }

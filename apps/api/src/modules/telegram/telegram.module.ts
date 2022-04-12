@@ -7,6 +7,7 @@ import botConfig from './configs/bot.config';
 import proxyConfig from './configs/proxy.config';
 import { MessageQueryOptionEntity } from './entities/message-query-options';
 import { HomeController } from './handlers/home.controllers';
+import { PostController } from './handlers/post.controller';
 import { DispatcherService } from './services/dispatcher.service';
 import { MessageQueryOptionService } from './services/message-query-option.service';
 
@@ -19,7 +20,7 @@ import { MessageQueryOptionService } from './services/message-query-option.servi
     SharedModule,
   ],
   providers: [DispatcherService, MessageQueryOptionService],
-  controllers: [HomeController],
+  controllers: [HomeController, PostController],
   exports: [DispatcherService],
 })
 export class TelegramModule {}

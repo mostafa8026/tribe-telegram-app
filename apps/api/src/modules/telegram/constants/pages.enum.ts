@@ -1,5 +1,7 @@
 export enum Pages {
   Home = 'Home',
   Greetings = 'Greetings',
-  HomeIntro = 'HomeIntro',
+  HomeIntro = 'Home.Intro',
+  PostReply = 'Post.Reply',
+  PostLike = 'Post.Like',
 }
