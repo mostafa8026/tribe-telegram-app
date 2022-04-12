@@ -154,6 +154,9 @@ export class DispatcherService
       } else if (telegramMessage.text === '/greetings') {
         page = Pages.Greetings;
       }
+
+      telegramMessage.page = page;
+      telegramMessage.pageOptions = user.pageOptions;
     }
 
     return this.run(telegramMessage, user, page);
