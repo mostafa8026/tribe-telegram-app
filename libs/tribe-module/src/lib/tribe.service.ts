@@ -88,12 +88,16 @@ export class TribeService implements OnModuleInit {
 
   async likePost(postId: string) {
     try {
-      return this._tribeClient.posts.addReaction({
-        postId,
-        input: {
-          reaction: '+1',
+      return this._tribeClient.posts.addReaction(
+        {
+          postId,
+          input: {
+            reaction: '+1',
+          },
         },
-      });
+        'all',
+        this.accessToken
+      );
     } catch (error) {
       this._logger.error(error);
       throw new InternalServerErrorException('Can not like post');
@@ -102,18 +106,23 @@ export class TribeService implements OnModuleInit {
 
   async addNewComment(postId: string, comment: string) {
     try {
-      return this._tribeClient.posts.reply(postId, {
-        input: {
-          postTypeId: 'fasdf',
-          mappingFields: [
-            {
-              key: 'content',
-              type: PostMappingTypeEnum.TEXT,
-              value: comment,
-            },
-          ],
+      return this._tribeClient.posts.reply(
+        postId,
+        {
+          input: {
+            postTypeId: 'fasdf',
+            mappingFields: [
+              {
+                key: 'content',
+                type: PostMappingTypeEnum.TEXT,
+                value: comment,
+              },
+            ],
+          },
         },
-      });
+        'all',
+        this.accessToken
+      );
     } catch (error) {
       this._logger.error(error);
       throw new InternalServerErrorException('Can not create comment');
