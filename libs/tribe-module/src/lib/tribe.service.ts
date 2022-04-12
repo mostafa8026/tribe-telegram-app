@@ -16,6 +16,7 @@ import {
   Post,
   PostListOrderByEnum,
   PostMappingTypeEnum,
+  PostType,
   SpaceListOrderByEnum,
   SpaceType,
 } from '@tribeplatform/gql-client/types';
@@ -25,6 +26,7 @@ import { TRIBE_OPTION } from './constants/tribe.constants';
 @Injectable()
 export class TribeService implements OnModuleInit {
   private accessToken: string;
+  private postTypes: PostType[];
 
   constructor(
     @Inject(TRIBE_OPTION) private _tribeOption: TribeOption,
@@ -41,11 +43,28 @@ export class TribeService implements OnModuleInit {
 
       this._logger.debug(`Token generated succesfully, ${this.accessToken}`);
       this._tribeClient.setToken(this.accessToken);
+      this.postTypes = (await this.getPostTypes()).nodes;
+      this._logger.debug(`Post types are: ${JSON.stringify(this.postTypes)}`);
     } catch (error) {
       this._logger.error(error);
       throw new InternalServerErrorException(
         'Can not genrate Tribe Access token'
       );
+    }
+  }
+
+  async getPostTypes() {
+    try {
+      return this._tribeClient.posts.listPostTypes(
+        {
+          limit: 10,
+        },
+        'all',
+        this.accessToken
+      );
+    } catch (error) {
+      this._logger.error(error);
+      throw new InternalServerErrorException('Can not get Post Types');
     }
   }
 
@@ -110,7 +129,7 @@ export class TribeService implements OnModuleInit {
         postId,
         {
           input: {
-            postTypeId: 'fasdf',
+            postTypeId: this.postTypes.find((x) => x.name === 'Comments').id,
             mappingFields: [
               {
                 key: 'content',
