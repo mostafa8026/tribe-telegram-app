@@ -54,7 +54,7 @@ export class WebhookService {
     const tribePost = await this._tribeService.getPostById(postId);
     const postEntity = new PostEntity();
     postEntity.tribePostId = tribePost.id;
-    this._postService.save(postEntity);
+    await this._postService.save(postEntity);
 
     // get admin users
     const users = await this._userService.getAll();

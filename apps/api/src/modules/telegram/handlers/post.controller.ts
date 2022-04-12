@@ -62,7 +62,7 @@ export class PostController {
     }
   }
 
-  @TelegramPage(Pages.HomeIntro)
+  @TelegramPage(Pages.PostLike)
   async homeIntroHandler(handlerData: HandlerData) {
     this._logger.debug(`Handling Post Like ${JSON.stringify(handlerData)}`);
 
