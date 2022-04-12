@@ -67,6 +67,7 @@ export class DispatcherService
       this._logger.debug('callback received ' + JSON.stringify(msg));
       const data = msg.data;
       const { pageAction, message, options } = await this.decompressData(data);
+      this._logger.debug(`pageAction is ${pageAction}`);
       const telegramMessage = new TelegramMessage();
       telegramMessage.message = msg.message;
       telegramMessage.message.from = msg.from;
@@ -135,6 +136,11 @@ export class DispatcherService
     } else if (!user.tribeId) {
       page = Pages.HomeIntro;
     } else {
+      if (telegramMessage.page) {
+        page = page;
+        user.pageOptions = telegramMessage.pageOptions;
+      }
+
       if (telegramMessage.text === '/start') {
         page = Pages.Home;
       } else if (telegramMessage.text === '/greetings') {
