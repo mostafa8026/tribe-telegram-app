@@ -91,6 +91,9 @@ export class DispatcherService
       options: options,
     };
     row = await this._messageQueryOptionService.save(row);
+    this._logger.debug(
+      `data has been compressed and save in: ${JSON.stringify(row)}`
+    );
     return `${row.id}`; // convert to string
   }
 
@@ -103,6 +106,7 @@ export class DispatcherService
         options: {},
       };
     }
+    this._logger.debug(`Decompressed data is: ${JSON.stringify(row)}`);
     return row.pageOptions;
   }
 
