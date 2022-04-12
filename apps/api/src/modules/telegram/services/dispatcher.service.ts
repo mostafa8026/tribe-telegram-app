@@ -121,6 +121,7 @@ export class DispatcherService
   }
 
   async dispatch(telegramMessage: TelegramMessage) {
+    this._logger.debug(`Dispatching the ${telegramMessage}`);
     let page = Pages.Home;
     const message = telegramMessage.message;
 
@@ -137,11 +138,13 @@ export class DispatcherService
       page = Pages.HomeIntro;
     } else {
       if (telegramMessage.page) {
-        page = page;
+        page = Pages[telegramMessage.page];
         user.pageOptions = telegramMessage.pageOptions;
-      }
 
-      if (telegramMessage.text === '/start') {
+        this._logger.debug(
+          `Callback receive, page: ${page}, pageOptions: ${telegramMessage.pageOptions}`
+        );
+      } else if (telegramMessage.text === '/start') {
         page = Pages.Home;
       } else if (telegramMessage.text === '/greetings') {
         page = Pages.Greetings;
