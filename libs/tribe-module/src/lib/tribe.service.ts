@@ -129,7 +129,7 @@ export class TribeService implements OnModuleInit {
         postId,
         {
           input: {
-            postTypeId: this.postTypes.find((x) => x.name === 'Comments').id,
+            postTypeId: this.postTypes.find((x) => x.name === 'Comment').id,
             mappingFields: [
               {
                 key: 'content',
