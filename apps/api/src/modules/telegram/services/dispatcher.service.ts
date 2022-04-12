@@ -140,7 +140,7 @@ export class DispatcherService
       if (telegramMessage.page) {
         page =
           Object.values(Pages).find(
-            (value, index, obj) => obj[value] === telegramMessage.page
+            (_, index, obj) => obj[index] === telegramMessage.page
           ) ?? Pages.Home;
         user.pageOptions = telegramMessage.pageOptions;
 
