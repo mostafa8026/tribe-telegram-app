@@ -122,11 +122,15 @@ export class DispatcherService
 
   async dispatch(telegramMessage: TelegramMessage) {
     this._logger.debug(`Dispatching the ${JSON.stringify(telegramMessage)}`);
-    let page = Pages.Home;
     const message = telegramMessage.message;
 
     // find user
     let user = await this._userService.getByChatId(message.from.id);
+    let page: Pages = this.getPageEnum(user.page);
+
+    this._logger.debug(
+      `Default page has been set by user (${user.page}) page: ${page}`
+    );
 
     if (!user) {
       user = new UserEntity();
@@ -138,10 +142,8 @@ export class DispatcherService
       page = Pages.HomeIntro;
     } else {
       if (telegramMessage.page) {
-        page =
-          Object.values(Pages).find(
-            (_, index, obj) => obj[index] === telegramMessage.page
-          ) ?? Pages.Home;
+        page = this.getPageEnum(telegramMessage.page);
+
         user.pageOptions = telegramMessage.pageOptions;
 
         this._logger.debug(
@@ -155,6 +157,13 @@ export class DispatcherService
     }
 
     return this.run(telegramMessage, user, page);
+  }
+
+  getPageEnum(page: string) {
+    return (
+      Object.values(Pages).find((_, index, obj) => obj[index] === page) ??
+      Pages.Home
+    );
   }
 
   async run(message: TelegramMessage, user: UserEntity, page: string) {
