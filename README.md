@@ -28,7 +28,7 @@ Be sure that services work correctly by looking at the logs:
 docker-compose -f tools/devops/deploy/docker-compose.yaml logs -f
 ```
 
-**Don't forget** to provide DB password with a .env file at the root, sample .env file:
+**Don't forget** to provide DB password, tribe api configs and your bot config (that you registered by the help of [botfather](https://telegram.me/BotFather)) with a .env file at the root, sample .env file:
 
 ```
 # TOKEN
