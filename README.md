@@ -13,3 +13,30 @@ NOTE: use `yarn run commit` to commit your changes. this repo is commitizen frie
 ## Build
 
 Run `yarn build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## Deploy
+
+To deploy by docker you can simple run this command:
+
+```
+docker-compose -f tools/devops/deploy/docker-compose.yaml up --build -d
+```
+
+don't forget to provide DB password with a .env file at the root, sample .env file:
+
+```
+# TOKEN
+GRAPHQL_URL="https://app.tribe.so/graphql"
+CLIENT_ID = ""
+CLIENT_SECRET = ""
+SIGNING_SECRET = ""
+NETWORK_ID = ""
+MEMBER_ID = ""
+
+# BOT, get these from @botfather
+TELEGRAM_BOT_TOKEN = ""
+TELEGRAM_BOT_USERNAME = ""
+
+# DATABASE CONFIG
+TYPEORM_PASSWORD = "Your-Very-Strong-Password"
+```
