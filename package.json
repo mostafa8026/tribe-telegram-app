@@ -5,7 +5,7 @@
   "scripts": {
     "start": "yarn run build && node -r dotenv/config dist/apps/api/main.js dotenv_config_path=apps/api/.env",
     "build": "nx build api",
-    "test": "nx test",
+    "test": "nx test api --watch",
     "commit": "cz",
     "dev": "nx serve api"
   },
@@ -32,6 +32,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@golevelup/ts-jest": "^0.3.2",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@nrwl/cli": "13.9.6",

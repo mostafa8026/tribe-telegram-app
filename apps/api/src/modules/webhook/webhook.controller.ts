@@ -47,7 +47,7 @@ export class WebhookController {
     this._logger.debug('X-Tribe-Request-Timestamp ' + tribeRequestTimeStamp);
     this._logger.debug('X-Tribe-Signature ' + tribeSignature);
 
-    var difference = (tribeRequestTimeStamp - Date.now()) / 1000 / 60;
+    var difference = (Date.now() - tribeRequestTimeStamp) / 1000 / 60;
     this._logger.debug('difference ' + difference);
     if (difference > 15) {
       // greater than 15 minutes
