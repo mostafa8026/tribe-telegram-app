@@ -24,7 +24,10 @@ export class UserEntity extends BaseOptionEntity {
   @Column()
   page: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+    length: 4000,
+  })
   accessToken: string;
 
   @CreateDateColumn()

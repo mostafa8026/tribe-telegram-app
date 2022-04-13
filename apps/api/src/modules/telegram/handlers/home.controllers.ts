@@ -21,6 +21,7 @@ export class HomeController {
     if (handlerData.telegramMessage.text) {
       if (handlerData.telegramMessage.text === Key.Logout) {
         handlerData.user.tribeId = null;
+        handlerData.user.accessToken = null;
         this._userService.save(handlerData.user);
         this._dispatcherService.sendMessage(
           handlerData.user,

@@ -48,7 +48,7 @@ export class WebhookService {
 
   async postPublishHandler(postId, repliedToId, ownerId) {
     this._logger.debug(
-      `New post published, let's go handle it, postId: ${postId}`
+      `New post published, let's go handle it, postId: ${postId}, repliedToId: ${repliedToId}, ownerId: ${ownerId}`
     );
 
     const tribePost = await this._tribeService.getPostById(postId);
@@ -57,7 +57,7 @@ export class WebhookService {
     await this._postService.save(postEntity);
 
     // get admin users
-    const users = await this._userService.getAll();
+    const users = await this._userService.getAllLoggedInTelegram();
     // target users include admin users + the ownerId
     let targetUsers: UserEntity[] = [];
     await Promise.all(

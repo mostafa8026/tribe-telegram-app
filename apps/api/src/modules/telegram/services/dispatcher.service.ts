@@ -16,6 +16,7 @@ import { HandlerData } from '../classes/handler-data';
 import { TelegramMessage } from '../classes/telegram-message';
 import botConfig from '../configs/bot.config';
 import proxyConfig from '../configs/proxy.config';
+import { Key } from '../constants/key.enum';
 import { Pages } from '../constants/pages.enum';
 import { MessageQueryOptionEntity } from '../entities/message-query-options';
 import { MessageQueryOptionService } from './message-query-option.service';
@@ -126,10 +127,10 @@ export class DispatcherService
 
     // find user
     let user = await this._userService.getByChatId(message.from.id);
-    let page: Pages = this.getPageEnum(user.page);
+    let page: Pages = this.getPageEnum(user?.page);
 
     this._logger.debug(
-      `Default page has been set by user (${user.page}) page: ${page}`
+      `Default page has been set by user (${user?.page}) page: ${page}`
     );
 
     if (!user) {
@@ -153,6 +154,8 @@ export class DispatcherService
         page = Pages.Home;
       } else if (telegramMessage.text === '/greetings') {
         page = Pages.Greetings;
+      } else if (telegramMessage.text === Key.Logout) {
+        page = Pages.Home;
       }
 
       telegramMessage.page = page;

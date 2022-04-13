@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -12,6 +12,14 @@ export class UserService {
 
   getAll() {
     return this._userRepository.find();
+  }
+
+  getAllLoggedInTelegram() {
+    return this._userRepository.find({
+      where: {
+        chatId: Not(IsNull()),
+      },
+    });
   }
 
   getByChatId(chatId: number) {
