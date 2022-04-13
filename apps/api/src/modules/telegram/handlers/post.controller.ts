@@ -46,13 +46,18 @@ export class PostController {
     } else {
       if (handlerData.telegramMessage.text) {
         handlerData.user.pageOptions = null;
+        this._logger.debug(
+          `Going to send comment: ${handlerData.telegramMessage.text} to the ${options.postId}`
+        );
         const comment = await this._tribeService.addNewComment(
           options.postId,
-          options.replyMessage
+          handlerData.telegramMessage.text
         );
         await this._dispatcherService.sendMessage(
           handlerData.user,
-          `Your comment has been successfully inserted, commnetId: ${comment.id}`
+          `💐 Your comment has been successfully inserted, commnetId: ${
+            comment.id
+          } \n🔗 ${this._tribeService.getPostUrl(options.postId)}`
         );
         return this._dispatcherService.redirect(
           handlerData.telegramMessage,
@@ -70,6 +75,7 @@ export class PostController {
     const options = handlerData.telegramMessage.pageOptions
       .options as postOptions;
 
+    this._logger.debug(`Going to like postId: ${options.postId}`);
     await this._tribeService.likePost(options.postId);
     handlerData.user.pageOptions = null;
     await this._dispatcherService.sendMessage(

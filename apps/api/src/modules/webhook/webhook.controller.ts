@@ -8,6 +8,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { ApiBody } from '@nestjs/swagger';
 import { LoggerService } from '@tribe-telegram-app/shared';
 import tokenConfig from 'libs/shared/src/lib/configs/token.config';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +28,7 @@ export class WebhookController {
   }
 
   @Post()
+  @ApiBody({})
   async webhookHandler(
     @Req() req,
     @Headers('X-Tribe-Request-Timestamp') tribeRequestTimeStamp: number,

@@ -39,7 +39,7 @@ export class HomeController {
       handlerData.user,
       `
 hey, 👋
-Do you want me to gree you, send me /greetings
+Do you want me to greet you, send me /greetings
 .`,
       false,
       {

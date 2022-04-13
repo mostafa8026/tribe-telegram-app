@@ -83,7 +83,9 @@ export class WebhookService {
         };
         await this._dispatcherService.sendMessage(
           user,
-          `💐 New post has been added, You can take a look here: https://decodl.tribeplatform.com/general/post/${postId} or just simply reply your comment or like it with the following button`,
+          `💐 New post has been added,\n🔗 ${this._tribeService.getPostUrl(
+            postId
+          )} \n🟥 Reply your comment or like it with the following button`,
           false,
           {
             reply_markup: {

@@ -123,18 +123,25 @@ export class TribeService implements OnModuleInit {
     }
   }
 
+  getCommentPostType() {
+    const commentPostType = this.postTypes.find((x) => x.name === 'Comment').id;
+    this._logger.debug(`Comment Post Type is: ${commentPostType}`);
+    return commentPostType;
+  }
+
   async addNewComment(postId: string, comment: string) {
     try {
       return this._tribeClient.posts.reply(
         postId,
         {
           input: {
-            postTypeId: this.postTypes.find((x) => x.name === 'Comment').id,
+            postTypeId: this.getCommentPostType(),
+            publish: true,
             mappingFields: [
               {
                 key: 'content',
-                type: PostMappingTypeEnum.TEXT,
-                value: comment,
+                type: PostMappingTypeEnum.HTML,
+                value: JSON.stringify(`<p>${comment}</p>`),
               },
             ],
           },
@@ -146,6 +153,10 @@ export class TribeService implements OnModuleInit {
       this._logger.error(error);
       throw new InternalServerErrorException('Can not create comment');
     }
+  }
+
+  getPostUrl(postId: string) {
+    return `https://decodl.tribeplatform.com/general/post/${postId}`;
   }
 
   async getAllSpaces() {
