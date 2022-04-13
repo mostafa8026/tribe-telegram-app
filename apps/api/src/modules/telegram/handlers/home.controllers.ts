@@ -88,6 +88,7 @@ Do you want me to greet you, send me /greetings
         );
         handlerData.user.tribeId = tribeUser.member.id;
         handlerData.user.pageOptions = null;
+        handlerData.user.accessToken = tribeUser.accessToken;
         this._userService.save(handlerData.user);
 
         return this._dispatcherService.redirect(

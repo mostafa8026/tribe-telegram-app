@@ -46,7 +46,7 @@ export class WebhookService {
     return this._webhookAuditRepository.save(webhookAuditEntity);
   }
 
-  async postPublishHandler(postId, repliedToId) {
+  async postPublishHandler(postId, repliedToId, ownerId) {
     this._logger.debug(
       `New post published, let's go handle it, postId: ${postId}`
     );
@@ -58,22 +58,23 @@ export class WebhookService {
 
     // get admin users
     const users = await this._userService.getAll();
-    let adminUsers: UserEntity[] = [];
+    // target users include admin users + the ownerId
+    let targetUsers: UserEntity[] = [];
     await Promise.all(
       users.map(async (user) => {
         const userTribe = await this._tribeService.getMemberByID(user.tribeId, {
           role: 'basic',
         });
         console.log(userTribe);
-        if (userTribe.role.type == RoleType.ADMIN) {
-          adminUsers.push(user);
+        if (userTribe.role.type == RoleType.ADMIN || userTribe.id == ownerId) {
+          targetUsers.push(user);
         }
       })
     );
 
     // send message about new post to all admin users
     await Promise.all(
-      adminUsers.map(async (user) => {
+      targetUsers.map(async (user) => {
         this._logger.debug('Try to send message to: ' + user.chatId);
         let queryOption: QueryOption = {
           options: {

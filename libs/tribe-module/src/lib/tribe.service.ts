@@ -25,7 +25,7 @@ import { TRIBE_OPTION } from './constants/tribe.constants';
 
 @Injectable()
 export class TribeService implements OnModuleInit {
-  private accessToken: string;
+  private botAccessToken: string;
   private postTypes: PostType[];
 
   constructor(
@@ -36,13 +36,12 @@ export class TribeService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      this.accessToken = await this._tribeClient.generateToken({
+      this.botAccessToken = await this._tribeClient.generateToken({
         networkId: this._tribeOption.networkId,
-        memberId: this._tribeOption.memberId,
       });
 
-      this._logger.debug(`Token generated succesfully, ${this.accessToken}`);
-      this._tribeClient.setToken(this.accessToken);
+      this._logger.debug(`Token generated succesfully, ${this.botAccessToken}`);
+      this._tribeClient.setToken(this.botAccessToken);
       this.postTypes = (await this.getPostTypes()).nodes;
       this._logger.debug(`Post types are: ${JSON.stringify(this.postTypes)}`);
     } catch (error) {
@@ -53,14 +52,14 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getPostTypes() {
+  async getPostTypes(userAccessToken?: string) {
     try {
       return this._tribeClient.posts.listPostTypes(
         {
           limit: 10,
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
     } catch (error) {
       this._logger.error(error);
@@ -89,14 +88,14 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getAllMembers() {
+  async getAllMembers(userAccessToken?: string) {
     try {
       const spaces = await this._tribeClient.members.list(
         {
           limit: 30,
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
       return spaces;
     } catch (error) {
@@ -105,7 +104,7 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async likePost(postId: string) {
+  async likePost(postId: string, userAccessToken?: string) {
     try {
       return this._tribeClient.posts.addReaction(
         {
@@ -115,7 +114,7 @@ export class TribeService implements OnModuleInit {
           },
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
     } catch (error) {
       this._logger.error(error);
@@ -129,7 +128,11 @@ export class TribeService implements OnModuleInit {
     return commentPostType;
   }
 
-  async addNewComment(postId: string, comment: string) {
+  async addNewComment(
+    postId: string,
+    comment: string,
+    userAccessToken?: string
+  ) {
     try {
       return this._tribeClient.posts.reply(
         postId,
@@ -147,7 +150,7 @@ export class TribeService implements OnModuleInit {
           },
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
     } catch (error) {
       this._logger.error(error);
@@ -159,7 +162,7 @@ export class TribeService implements OnModuleInit {
     return `https://decodl.tribeplatform.com/general/post/${postId}`;
   }
 
-  async getAllSpaces() {
+  async getAllSpaces(userAccessToken?: string) {
     try {
       const spaces = await this._tribeClient.spaces.list(
         {
@@ -168,7 +171,7 @@ export class TribeService implements OnModuleInit {
           type: [SpaceType.GROUP],
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
       return spaces;
     } catch (error) {
@@ -177,13 +180,10 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  // async getAllComments() {
-  //   try{
-  //     const comments = await this._tribeClient.posts.replies({})
-  //   }
-  // }
-
-  async getAllPosts(after?: string): Promise<PaginatedPost> {
+  async getAllPosts(
+    after?: string,
+    userAccessToken?: string
+  ): Promise<PaginatedPost> {
     try {
       const posts = await this._tribeClient.posts.list(
         {
@@ -192,7 +192,7 @@ export class TribeService implements OnModuleInit {
           orderBy: PostListOrderByEnum.CREATED_AT,
         },
         'all',
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
       return posts;
     } catch (error) {
@@ -209,13 +209,14 @@ export class TribeService implements OnModuleInit {
 
   async getMemberByID(
     id: string,
-    fields: MemberFields = 'all'
+    fields: MemberFields = 'all',
+    userAccessToken?: string
   ): Promise<Member> {
     try {
       const userInfo = await this._tribeClient.members.get(
         id,
         fields,
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
       return userInfo;
     } catch (error) {
@@ -224,12 +225,16 @@ export class TribeService implements OnModuleInit {
     }
   }
 
-  async getPostById(id: string, fields: PostFields = 'all'): Promise<Post> {
+  async getPostById(
+    id: string,
+    fields: PostFields = 'all',
+    userAccessToken?: string
+  ): Promise<Post> {
     try {
       const postInfo = await this._tribeClient.posts.get(
         id,
         fields,
-        this.accessToken
+        userAccessToken ?? this.botAccessToken
       );
       return postInfo;
     } catch (error) {

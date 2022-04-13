@@ -51,7 +51,8 @@ export class PostController {
         );
         const comment = await this._tribeService.addNewComment(
           options.postId,
-          handlerData.telegramMessage.text
+          handlerData.telegramMessage.text,
+          handlerData.user.accessToken
         );
         await this._dispatcherService.sendMessage(
           handlerData.user,
@@ -77,7 +78,10 @@ export class PostController {
         .options as postOptions;
 
       this._logger.debug(`Going to like postId: ${options.postId}`);
-      await this._tribeService.likePost(options.postId);
+      await this._tribeService.likePost(
+        options.postId,
+        handlerData.user.accessToken
+      );
       handlerData.user.pageOptions = null;
       await this._dispatcherService.sendMessage(
         handlerData.user,
