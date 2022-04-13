@@ -70,22 +70,30 @@ export class PostController {
 
   @TelegramPage(Pages.PostLike)
   async homeIntroHandler(handlerData: HandlerData) {
-    this._logger.debug(`Handling Post Like ${JSON.stringify(handlerData)}`);
+    try {
+      this._logger.debug(`Handling Post Like ${JSON.stringify(handlerData)}`);
 
-    const options = handlerData.telegramMessage.pageOptions
-      .options as postOptions;
+      const options = handlerData.telegramMessage.pageOptions
+        .options as postOptions;
 
-    this._logger.debug(`Going to like postId: ${options.postId}`);
-    await this._tribeService.likePost(options.postId);
-    handlerData.user.pageOptions = null;
-    await this._dispatcherService.sendMessage(
-      handlerData.user,
-      `Post has been liked, Hooray!`
-    );
-    return this._dispatcherService.redirect(
-      handlerData.telegramMessage,
-      handlerData.user,
-      Pages.Home
-    );
+      this._logger.debug(`Going to like postId: ${options.postId}`);
+      await this._tribeService.likePost(options.postId);
+      handlerData.user.pageOptions = null;
+      await this._dispatcherService.sendMessage(
+        handlerData.user,
+        `Post has been liked, Hooray!`
+      );
+      return this._dispatcherService.redirect(
+        handlerData.telegramMessage,
+        handlerData.user,
+        Pages.Home
+      );
+    } catch (error) {
+      this._logger.error(error);
+      await this._dispatcherService.sendMessage(
+        handlerData.user,
+        `We have some problems right now, please try again later`
+      );
+    }
   }
 }

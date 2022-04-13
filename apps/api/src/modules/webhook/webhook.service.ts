@@ -46,7 +46,7 @@ export class WebhookService {
     return this._webhookAuditRepository.save(webhookAuditEntity);
   }
 
-  async postPublishHandler(postId) {
+  async postPublishHandler(postId, repliedToId) {
     this._logger.debug(
       `New post published, let's go handle it, postId: ${postId}`
     );
@@ -81,9 +81,14 @@ export class WebhookService {
             user,
           },
         };
+        const postMsg = '💐 New post has been added';
+        const replyMsg = '💬 New reply has been received';
+
         await this._dispatcherService.sendMessage(
           user,
-          `💐 New post has been added,\n🔗 ${this._tribeService.getPostUrl(
+          `${
+            repliedToId ? replyMsg : postMsg
+          },\n🔗 ${this._tribeService.getPostUrl(
             postId
           )} \n🟥 Reply your comment or like it with the following button`,
           false,

@@ -1,20 +1,9 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Controller,
-  Headers,
-  Inject,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Controller, Headers, Inject, Post, Req } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { ApiBody } from '@nestjs/swagger';
 import { LoggerService } from '@tribe-telegram-app/shared';
 import tokenConfig from 'libs/shared/src/lib/configs/token.config';
-import { v4 as uuidv4 } from 'uuid';
-import { verifySignature } from './classes/signing';
 import { HookTypes } from './constants/hook-types.enum';
-import { WebhookAuditEntity } from './entities/webhook-audit.entity';
 import { WebhookService } from './webhook.service';
 @Controller('webhook')
 export class WebhookController {
@@ -46,51 +35,51 @@ export class WebhookController {
     this._logger.debug('X-Tribe-Request-Timestamp ' + tribeRequestTimeStamp);
     this._logger.debug('X-Tribe-Signature ' + tribeSignature);
 
-    var difference = (tribeRequestTimeStamp - Date.now()) / 1000 / 60;
-    this._logger.debug('difference ' + difference);
-    if (difference > 15) {
-      // greater than 15 minutes
-      throw new ConflictException('dropping webhooks older than 15 minutes');
-    }
+    // var difference = (tribeRequestTimeStamp - Date.now()) / 1000 / 60;
+    // this._logger.debug('difference ' + difference);
+    // if (difference > 15) {
+    //   // greater than 15 minutes
+    //   throw new ConflictException('dropping webhooks older than 15 minutes');
+    // }
 
-    if (body.data?.id) {
-      const entity = await this._webhookService.getWebhookAuditById(
-        body.data.id
-      );
-      this._logger.log('Verifying replays, ' + JSON.stringify(entity));
-      if (entity) {
-        throw new ConflictException(
-          'This webhook was recieved before. droping it.'
-        );
-      }
-    }
+    // if (body.data?.id) {
+    //   const entity = await this._webhookService.getWebhookAuditById(
+    //     body.data.id
+    //   );
+    //   this._logger.log('Verifying replays, ' + JSON.stringify(entity));
+    //   if (entity) {
+    //     throw new ConflictException(
+    //       'This webhook was recieved before. droping it.'
+    //     );
+    //   }
+    // }
 
-    let saveEntity = new WebhookAuditEntity();
-    saveEntity.id = body.data?.id ?? uuidv4();
-    saveEntity.actorId = body.data?.actor?.id ?? '';
-    saveEntity.type = body.type ?? 'UNKNOWN';
-    saveEntity.name = body.data?.name ?? '';
-    saveEntity.objectId = body.data?.object?.id ?? '';
-    saveEntity.targetNetworkId =
-      body.data?.target?.networkId ?? body.networkId ?? '';
+    // let saveEntity = new WebhookAuditEntity();
+    // saveEntity.id = body.data?.id ?? uuidv4();
+    // saveEntity.actorId = body.data?.actor?.id ?? '';
+    // saveEntity.type = body.type ?? 'UNKNOWN';
+    // saveEntity.name = body.data?.name ?? '';
+    // saveEntity.objectId = body.data?.object?.id ?? '';
+    // saveEntity.targetNetworkId =
+    //   body.data?.target?.networkId ?? body.networkId ?? '';
 
-    await this._webhookService.saveWebhookAudit(saveEntity);
+    // await this._webhookService.saveWebhookAudit(saveEntity);
 
-    this._logger.debug('Verifying signature');
-    if (
-      !verifySignature({
-        signature: tribeSignature,
-        secret: this._tokenConfigService.signingSecret,
-        timestamp: tribeRequestTimeStamp,
-        body: rawBody,
-      })
-    ) {
-      throw new BadRequestException(
-        'Signature problem, please provide right signature'
-      );
-    }
+    // this._logger.debug('Verifying signature');
+    // if (
+    //   !verifySignature({
+    //     signature: tribeSignature,
+    //     secret: this._tokenConfigService.signingSecret,
+    //     timestamp: tribeRequestTimeStamp,
+    //     body: rawBody,
+    //   })
+    // ) {
+    //   throw new BadRequestException(
+    //     'Signature problem, please provide right signature'
+    //   );
+    // }
 
-    this._logger.debug('Signature verfied succesfully');
+    // this._logger.debug('Signature verfied succesfully');
 
     switch (body.type) {
       case HookTypes.TEST: {
@@ -102,7 +91,8 @@ export class WebhookController {
       case HookTypes.SUBSCRIPTION: {
         if (body.data.name === 'post.published') {
           return await this._webhookService.postPublishHandler(
-            saveEntity.objectId
+            body.data?.object.id,
+            body.data?.object.repliedToId
           );
         }
       }
