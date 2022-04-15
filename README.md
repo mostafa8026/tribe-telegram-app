@@ -8,6 +8,14 @@ This repository integrate Tribe api (https://www.npmjs.com/package/@tribeplatfor
 
 Fist copy .env.sample to .env file and fill it with propert values. You can simply create a database and provide it's name inside `TYPEORM_DATABASE`, set `TYPEORM_SYNCHRONIZE` to true and then start the api with `yarn dev` for a dev server. Navigate to http://localhost:3333/. The app will automatically reload if you change any of the source files.
 
+For testing the webhook you can simple use [ngrok](https://ngrok.com/). Once you installed it and configured it with your access token, you can create a tunnel with this command:
+
+```
+$ ngrok http 3333
+```
+
+After that you can provide the generated link to the tribe webhook panel. Have a wonderful coding exprience!
+
 NOTE: use `yarn run commit` to commit your changes. this repo is commitizen friendly.
 
 ## Build
