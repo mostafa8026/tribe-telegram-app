@@ -42,6 +42,8 @@ services:
       ACCEPT_EULA: Y
     volumes:
       - mssql_vol:/var/opt/mssql
+    ports:
+      - 30896:1433
 volumes:
   mssql_vol:
     name: mssql_vol
